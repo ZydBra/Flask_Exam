@@ -27,5 +27,5 @@ class PrisijungimoForma(FlaskForm):
 class SaskaitosIvedimoForma(FlaskForm):
     sask_suma = StringField('Amount', validators=[DataRequired()])
     aprasymas = StringField('Description', validators=[DataRequired()])
-    grupes_id = QuerySelectField(query_factory=main.Grupe.query.all, allow_blank=False, get_label='grupes_pavadinimas',
+    grupes_id = QuerySelectField('Group Name', get_label='grupes_pavadinimas',
                                  get_pk=lambda obj: str(obj))

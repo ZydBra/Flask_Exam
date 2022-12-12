@@ -131,8 +131,9 @@ def atvaizduoti_grupes():
 @app.route('/bills/<grupes_id>', methods=['GET', 'POST'])
 @login_required
 def ivesti_saskaita(grupes_id):
+
     forma = forms.SaskaitosIvedimoForma()
-    # forma.query = Grupe.query.filter_by(id=current_user.id)
+    forma.grupes_id.query = Grupe.query.filter(Grupe.naudotojai.any(Naudotojas.id == current_user.id)).all()
     if forma.validate_on_submit():
         saskaita = Saskaita(sask_suma=forma.sask_suma.data, aprasymas=forma.aprasymas.data, grupes_id=grupes_id)
         db.session.add(saskaita)
