@@ -1,8 +1,9 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import UserMixin
+from flask_login import LoginManager, UserMixin
 from flask_bcrypt import Bcrypt
 from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "***code_academy_flask_exam***"
@@ -10,6 +11,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///my_database?check_same_thread
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'
+login_manager.login_message_category = 'info'
+
+bcrypt = Bcrypt(app)
+admin = Admin(app, name='Flask Admin')
 
 # DB struktūra:
 
@@ -45,10 +52,20 @@ class Saskaita(db.Model):
     grupes_id = db.Column(db.String, db.ForeignKey('grupe.id'))
     grupe = db.relationship("Grupe", lazy=True)
 
+
 # DB pabaiga
+# Admin puslapis
+admin.add_view(ModelView(Saskaita, db.session))
+admin.add_view(ModelView(Grupe, db.session))
+admin.add_view(ModelView(Naudotojas, db.session))
+
+
+@login_manager.user_loader
+def uzkrauti_naudotoja(e_pastas):
+    return Naudotojas.query.get(e_pastas)
+
 
 with app.app_context():
-
     db.create_all()
 
 if __name__ == '__main__':
