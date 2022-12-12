@@ -66,6 +66,7 @@ def uzkrauti_naudotoja(e_pastas):
 
 
 with app.app_context():
+    import forms
     db.create_all()
 
 

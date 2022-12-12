@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Groups bill's:</h1>
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Description</th>
+        <th scope="col">Amount</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% if grupes_saskaitos %}
+    {% for saskaita in grupes_saskaitos %}
+    <tr>
+        <th scope="row">{{ saskaita.id }}</th>
+        <th scope="row">{{ saskaita.aprasymas }}</th>
+        <th scope="row">{{ saskaita.sask_suma }}</th>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+
+<p><a href="{{ url_for('ivesti_saskaita', grupes_id=grupes_id)}}">Add invoice</a></p>
+
+
+{% endblock %}

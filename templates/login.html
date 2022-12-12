@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form method="POST">
+    {{ form.csrf_token }}
+    {{ form.e_pastas.label }} {{ form.e_pastas() }}
+    {{ form.slaptazodis.label }} {{ form.slaptazodis() }}
+    <input type="submit" value="Login">
+</form>
+<p>Don't have an account? <a href="{{ url_for('registruotis') }}">Register</a></p>
+{% endblock %}

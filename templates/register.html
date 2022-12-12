@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form method="POST">
+    {{ form.csrf_token }}
+    {{ form.vardas_pavarde.label }} {{ form.vardas_pavarde() }}
+    {{ form.e_pastas.label }} {{ form.e_pastas() }}
+    {{ form.slaptazodis_1.label }} {{ form.slaptazodis_1() }}
+    {{ form.slaptazodis_2.label }} {{ form.slaptazodis_2() }}
+    <input type="submit" value="Register">
+</form>
+{% endblock %}
