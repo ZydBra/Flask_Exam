@@ -4,6 +4,7 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, curren
 from flask_bcrypt import Bcrypt
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
+from datetime import datetime
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "***code_academy_flask_exam***"
@@ -48,18 +49,28 @@ class Saskaita(db.Model):
     __tablename__ = 'saskaita'
     id = db.Column(db.Integer, primary_key=True)
     aprasymas = db.Column(db.String, nullable=False)
-    sask_suma = db.Column(db.Integer, unique=True, nullable=False)
+    sask_suma = db.Column(db.Integer, nullable=False)
+    sask_autorius = db.Column(db.Integer, nullable=False)
+    ivedimo_data = db.Column(db.String)
     grupes_id = db.Column(db.String, db.ForeignKey('grupe.id'))
     grupe = db.relationship("Grupe", lazy=True)
 
 
 # DB pabaiga
+
 # Admin puslapis
+class ManoModelView(ModelView):
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+
 admin.add_view(ModelView(Saskaita, db.session))
 admin.add_view(ModelView(Grupe, db.session))
-admin.add_view(ModelView(Naudotojas, db.session))
+# admin.add_view(ModelView(Naudotojas, db.session))
+admin.add_view(ManoModelView(Naudotojas, db.session))
 
 
+# Admin pabaiga
 @login_manager.user_loader
 def uzkrauti_naudotoja(e_pastas):
     return Naudotojas.query.get(e_pastas)
@@ -67,6 +78,7 @@ def uzkrauti_naudotoja(e_pastas):
 
 with app.app_context():
     import forms
+
     db.create_all()
 
 
@@ -117,30 +129,20 @@ def atsijungti():
     return redirect(url_for('prisijungti'))
 
 
-@app.route('/groups')
+@app.route('/groups', methods=['GET', 'POST'])
 @login_required
 def atvaizduoti_grupes():
     try:
         visos_grupes = Grupe.query.filter(Grupe.naudotojai.any(Naudotojas.id == current_user.id)).all()
     except:
         visos_grupes = []
-    print(visos_grupes)
-    return render_template('groups.html', visos_grupes=visos_grupes)
-
-
-@app.route('/bills/<grupes_id>', methods=['GET', 'POST'])
-@login_required
-def ivesti_saskaita(grupes_id):
-
-    forma = forms.SaskaitosIvedimoForma()
-    forma.grupes_id.query = Grupe.query.filter(Grupe.naudotojai.any(Naudotojas.id == current_user.id)).all()
+    forma = forms.GrupesPasirinkimoForma()
     if forma.validate_on_submit():
-        saskaita = Saskaita(sask_suma=forma.sask_suma.data, aprasymas=forma.aprasymas.data, grupes_id=grupes_id)
-        db.session.add(saskaita)
+        grupe = Grupe.query.get(forma.pasirinkta_grupe.data.id)
+        current_user.grupes.append(grupe)
         db.session.commit()
-        flash(f'Invoice ID: {saskaita.id} added.', 'success')
-        return redirect(url_for('ivesti_saskaita', grupes_id=grupes_id))
-    return render_template('bills.html', form=forma)
+        return redirect(url_for('atvaizduoti_grupes'))
+    return render_template('groups.html', visos_grupes=visos_grupes, form=forma)
 
 
 @app.route('/show_bills/<grupes_id>', methods=['GET', 'POST'])
@@ -150,8 +152,22 @@ def rodyti_grupes_saskaitas(grupes_id):
         grupes_saskaitos = Saskaita.query.filter_by(grupes_id=grupes_id).all()
     except:
         grupes_saskaitos = []
-    print(grupes_saskaitos)
-    return render_template("show_bills.html", grupes_saskaitos=grupes_saskaitos, grupes_id=grupes_id)
+    saskaitu_suma = 0
+    for suma in grupes_saskaitos:
+        saskaitu_suma += suma.sask_suma
+
+    forma = forms.SaskaitosIvedimoForma()
+    if forma.validate_on_submit():
+        saskaitos_data = datetime.now().strftime("%x")
+        saskaitos_autorius = current_user.vardas_pavarde
+        saskaita = Saskaita(sask_suma=forma.sask_suma.data, aprasymas=forma.aprasymas.data, grupes_id=grupes_id,
+                            sask_autorius=saskaitos_autorius, ivedimo_data=saskaitos_data)
+        db.session.add(saskaita)
+        db.session.commit()
+        flash(f'Invoice ID: {saskaita.id} added.', 'success')
+        return redirect(url_for('rodyti_grupes_saskaitas', grupes_id=grupes_id))
+    return render_template("show_bills.html", grupes_saskaitos=grupes_saskaitos, grupes_id=grupes_id,
+                           saskaitu_suma=saskaitu_suma, form=forma)
 
 
 if __name__ == '__main__':

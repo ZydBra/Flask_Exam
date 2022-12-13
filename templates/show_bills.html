@@ -7,7 +7,9 @@
     <tr>
         <th scope="col">ID</th>
         <th scope="col">Description</th>
-        <th scope="col">Amount</th>
+        <th scope="col">Amount, €</th>
+        <th scope="col">Add date</th>
+        <th scope="col">Author</th>
     </tr>
     </thead>
     <tbody>
@@ -17,14 +19,25 @@
         <th scope="row">{{ saskaita.id }}</th>
         <th scope="row">{{ saskaita.aprasymas }}</th>
         <th scope="row">{{ saskaita.sask_suma }}</th>
+        <th scope="row">{{ saskaita.ivedimo_data }}</th>
+        <th scope="row">{{ saskaita.sask_autorius }}</th>
     </tr>
     {% endfor %}
     </tbody>
+    <tfoot>
+    <tr>
+        <th scope="col">Total amount:</th>
+        <th scope="col">{{ saskaitu_suma }}€</th>
+    </tr>
+
+    </tfoot>
 </table>
-{% endif %}
-
-
-<p><a href="{{ url_for('ivesti_saskaita', grupes_id=grupes_id)}}">Add invoice</a></p>
-
+    {% endif %}
+<form method="POST">
+    {{ form.csrf_token }}
+    {{ form.sask_suma.label }} {{ form.sask_suma() }}
+    {{ form.aprasymas.label }} {{ form.aprasymas() }}
+    <input type="submit" value="Add">
+</form>
 
 {% endblock %}

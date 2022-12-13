@@ -2,7 +2,6 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, EmailField
 from wtforms.validators import DataRequired, EqualTo, ValidationError
 from wtforms_sqlalchemy.fields import QuerySelectField
-from flask_login import current_user
 import main
 
 
@@ -27,5 +26,9 @@ class PrisijungimoForma(FlaskForm):
 class SaskaitosIvedimoForma(FlaskForm):
     sask_suma = StringField('Amount', validators=[DataRequired()])
     aprasymas = StringField('Description', validators=[DataRequired()])
-    grupes_id = QuerySelectField('Group Name', get_label='grupes_pavadinimas',
-                                 get_pk=lambda obj: str(obj))
+
+
+class GrupesPasirinkimoForma(FlaskForm):
+    pasirinkta_grupe = QuerySelectField('Group Name', query_factory=main.Grupe.query.all,
+                                        get_label='grupes_pavadinimas',
+                                        get_pk=lambda obj: str(obj))

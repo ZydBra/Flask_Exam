@@ -1,12 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>{{ current_user.vardas_pavarde }}</h1>
 <table class="table">
     <thead>
     <tr>
         <th scope="col">ID</th>
-        <th scope="col">Grupės pavadinimas</th>
+        <th scope="col">Group Name</th>
     </tr>
     </thead>
     <tbody>
@@ -23,4 +22,10 @@
     {% endif %}
     </tbody>
 </table>
+<h4>Select the group you are participating in:</h4>
+<form method="POST">
+    {{ form.csrf_token }}
+    {{ form.pasirinkta_grupe.label }} {{ form.pasirinkta_grupe() }}
+    <input type="submit" value="Select">
+</form>
 {% endblock %}
