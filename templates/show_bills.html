@@ -2,6 +2,7 @@
 
 {% block content %}
 <h1>Groups bill's:</h1>
+{% if grupes_saskaitos %}
 <table class="table">
     <thead>
     <tr>
@@ -31,8 +32,9 @@
     </tr>
 
     </tfoot>
+     {% endif %}
 </table>
-    {% endif %}
+{% endif %}
 <h3>Add bill to this group:</h3>
 <form class="inside" method="POST">
     {{ form.csrf_token }}

@@ -11,6 +11,7 @@ class RegistravimosiForma(FlaskForm):
     slaptazodis_1 = PasswordField('Password', validators=[DataRequired()])
     slaptazodis_2 = PasswordField('Reapeat Password', validators=[DataRequired(), EqualTo('slaptazodis_1',
                                                                                           message='Passwords must be the same!')])
+
     def tikrinti_pasta(self, e_pastas):
         naudotojas = main.Naudotojas.query.filter_by(e_pastas=e_pastas.data).first()
         if naudotojas:
