@@ -33,7 +33,8 @@
     </tfoot>
 </table>
     {% endif %}
-<form method="POST">
+<h3>Add bill to this group:</h3>
+<form class="inside" method="POST">
     {{ form.csrf_token }}
     {{ form.sask_suma.label }} {{ form.sask_suma() }}
     {{ form.aprasymas.label }} {{ form.aprasymas() }}
