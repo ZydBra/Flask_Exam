@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Groups bill's:</h1>
+{% if grupes_saskaitos %}
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Description</th>
+        <th scope="col">Amount, €</th>
+        <th scope="col">Add date</th>
+        <th scope="col">Author</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% if grupes_saskaitos %}
+    {% for saskaita in grupes_saskaitos %}
+    <tr>
+        <th scope="row">{{ saskaita.id }}</th>
+        <th scope="row">{{ saskaita.aprasymas }}</th>
+        <th scope="row">{{ saskaita.sask_suma }}</th>
+        <th scope="row">{{ saskaita.ivedimo_data }}</th>
+        <th scope="row">{{ saskaita.sask_autorius }}</th>
+    </tr>
+    {% endfor %}
+    </tbody>
+    <tfoot>
+    <tr>
+        <th scope="col">Total amount:</th>
+        <th scope="col">{{ saskaitu_suma }}€</th>
+    </tr>
+
+    </tfoot>
+     {% endif %}
+</table>
+{% endif %}
+<h3>Add bill to this group:</h3>
+<form class="inside" method="POST">
+    {{ form.csrf_token }}
+    {{ form.sask_suma.label }} {{ form.sask_suma() }}
+    {{ form.aprasymas.label }} {{ form.aprasymas() }}
+    <input type="submit" value="Add">
+</form>
+
+{% endblock %}

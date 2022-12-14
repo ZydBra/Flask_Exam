@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Your Groups:</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Group Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if visos_grupes %}
+            {% for grupe in visos_grupes %}
+                <tr>
+                    <th><a href="{{ url_for('rodyti_grupes_saskaitas', grupes_id=grupe.id)}}">{{ grupe.id }}</a></th>
+                    <th>{{ grupe.grupes_pavadinimas }}</th>
+                </tr>
+            {% endfor %}
+        {% endif %}
+    </tbody>
+</table>
+
+    <h3>Select the group you would like to join:</h3>
+    <form class="inside" method="POST">
+        {{ form.csrf_token }}
+        {{ form.pasirinkta_grupe.label }} {{ form.pasirinkta_grupe() }}
+        <input type="submit" value="Select">
+    </form>
+
+{% endblock %}
